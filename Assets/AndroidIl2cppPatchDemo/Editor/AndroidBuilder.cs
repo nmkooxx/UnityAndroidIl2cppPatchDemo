@@ -11,8 +11,8 @@ public class AndroidBuilder : MonoBehaviour {
 
     //-----------------------------------------  config ---------------------------------
     //set SDK/NDK/JDK via Unity Menu Path: Edit -> Preferences... -> External Tools -> Android
-    public static readonly string ANDROID_BUILD_TOOLS_VERSION = "26.0.2";
-    public static readonly string ANDROID_PLATFORM = "android-23";
+    public static readonly string ANDROID_BUILD_TOOLS_VERSION = "30.0.2";
+    public static readonly string ANDROID_PLATFORM = "android-29";
 
     //-----------------------------------------------------------------------------------
     public static readonly string PROJECT_DIR = Application.dataPath.Substring(0, Application.dataPath.Length - 6);
@@ -132,7 +132,7 @@ public class AndroidBuilder : MonoBehaviour {
         EditorUserBuildSettings.androidBuildSystem = AndroidBuildSystem.Gradle;
         PlayerSettings.SetScriptingBackend(BuildTargetGroup.Android, ScriptingImplementation.IL2CPP);
         PlayerSettings.stripEngineCode = false;
-#if UNITY_2018 || UNITY_2019
+#if UNITY_2018_1_OR_NEWER
         PlayerSettings.Android.targetArchitectures = AndroidArchitecture.ARMv7 | AndroidArchitecture.X86 | AndroidArchitecture.ARM64;
 #endif
 
@@ -146,7 +146,7 @@ public class AndroidBuilder : MonoBehaviour {
         PlayerSettings.bundleVersion = "1.1";
         try
         {
-#if UNITY_2018 || UNITY_2019
+#if UNITY_2018_1_OR_NEWER
             error_msg = BuildPipeline.BuildPlayer(levels, ANDROID_EXPORT_PATH, EditorUserBuildSettings.activeBuildTarget, options).summary.result == UnityEditor.Build.Reporting.BuildResult.Succeeded ? string.Empty : "Failed to export project!";
 #else
             error_msg = BuildPipeline.BuildPlayer(levels, ANDROID_EXPORT_PATH, EditorUserBuildSettings.activeBuildTarget, options);
@@ -225,8 +225,8 @@ import io.github.noodle1983.Boostrap;");
         {
                 // path_in_android_project, filename inside zip, zip file anme
                 new string[3]{ "/"+ SO_DIR_NAME + "/armeabi-v7a/libil2cpp.so", "libil2cpp.so.new", "lib_armeabi-v7a_libil2cpp.so.zip" },
-                new string[3]{ "/"+ SO_DIR_NAME + "/x86/libil2cpp.so", "libil2cpp.so.new", "lib_x86_libil2cpp.so.zip" },
-#if UNITY_2018 || UNITY_2019              
+                //new string[3]{ "/"+ SO_DIR_NAME + "/x86/libil2cpp.so", "libil2cpp.so.new", "lib_x86_libil2cpp.so.zip" },
+#if UNITY_2018_1_OR_NEWER              
                 new string[3]{ "/"+ SO_DIR_NAME + "/arm64-v8a/libil2cpp.so", "libil2cpp.so.new", "lib_arm64-v8a_libil2cpp.so.zip" },
 #endif
         };
@@ -331,13 +331,13 @@ import io.github.noodle1983.Boostrap;");
         if (Directory.Exists(outputLibPath)) { FileUtil.DeleteFileOrDirectory(outputLibPath); }
         Directory.CreateDirectory(outputLibPath);
         FileUtil.ReplaceDirectory(SO_LIB_PATH + "/armeabi-v7a", outputLibPath + "/armeabi-v7a");
-        FileUtil.ReplaceDirectory(SO_LIB_PATH + "/x86", outputLibPath + "/x86");
-#if UNITY_2018 || UNITY_2019
+        //FileUtil.ReplaceDirectory(SO_LIB_PATH + "/x86", outputLibPath + "/x86");
+#if UNITY_2018_1_OR_NEWER
         FileUtil.ReplaceDirectory(SO_LIB_PATH + "/arm64-v8a", outputLibPath + "/arm64-v8a");
         FileUtil.DeleteFileOrDirectory(outputLibPath + "/arm64-v8a/Data");
 #endif
         FileUtil.DeleteFileOrDirectory(outputLibPath + "/armeabi-v7a/Data");
-        FileUtil.DeleteFileOrDirectory(outputLibPath + "/x86/Data");
+        //FileUtil.DeleteFileOrDirectory(outputLibPath + "/x86/Data");
         var debug_files = Directory.GetFiles(outputLibPath, "*.*", SearchOption.AllDirectories).Where(s => s.EndsWith(".debug") || s.EndsWith(".map") || s.EndsWith(".sym"));
         foreach (string file in debug_files) { File.Delete(file); }
 
